@@ -5,15 +5,37 @@ import React, { useState } from 'react';
 import Logo from '../assets/images/logo.png';
 import CustomInput from '../components/CustomInput';
 import CustomButton from '../components/CustomButton';
+import api from "../api/index.js";
+import { beginAsyncEvent } from "react-native/Libraries/Performance/Systrace";
+
+
 const RegisterUser = ({ navigation }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [admin, setAdmin] = useState('');
     const { height } = useWindowDimensions();
-    const onRegisterPressed = () => {
-        alert("Registered User " + name + " and " + password + " and " +
-            email + " and " + admin);
+
+    const onRegisterPressed = async () => {
+
+        try{
+            const data = await api.post('/user/register', {
+                name: name,
+                email: email,
+                password: password,
+                admin: admin
+            });
+            if (data.status === 200){
+                console.log(data)
+                alert(data.data.message)
+                navigation.navigate('Login')
+            }else{
+                console.log(data)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
     }
     return (
         <View style={styles.view}>
